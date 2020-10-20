@@ -1,19 +1,20 @@
 echo "Welcome! Let's start setting up your system xD It could take more than 10 minutes, be patient"
 
-sudo apt-get update
+sudo apt update
 
-echo 'installing curl' 
+echo 'installing curl'
 sudo apt install curl -y
+
+echo 'installing git'
+
+sudo apt install git -y
 
 echo 'installing vim'
 sudo apt install vim -y
 clear
 
-echo 'installing git' 
-sudo apt install git -y
-
 echo "What name do you want to use in GIT user.name?"
-echo "For example, mine will be \"Olavio Lacerda\""
+echo "For example, mine will be \"kelvynsantana\""
 read git_config_user_name
 git config --global user.name "$git_config_user_name"
 clear 
@@ -32,14 +33,6 @@ else
 	echo "Okay, no problem. :) Let's move on!"
 fi
 
-echo "Generating a SSH Key"
-ssh-keygen -t rsa -b 4096 -C $git_config_user_email
-ssh-add ~/.ssh/id_rsa
-cat ~/.ssh/id_rsa.pub | xclip -selection clipboard
-
-echo 'enabling workspaces for both screens' 
-gsettings set org.gnome.mutter workspaces-only-on-primary false
-
 echo 'installing zsh'
 sudo apt-get install zsh -y
 sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
@@ -52,16 +45,13 @@ export alias pbcopy='xclip -selection clipboard'
 export alias pbpaste='xclip -selection clipboard -o'
 source ~/.zshrc
 
-echo 'installing code'
+echo 'installing vscode'
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
 sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
 sudo apt-get install apt-transport-https -y
 sudo apt-get update
-sudo apt-get install code -y # or code-insiders
-
-echo 'installing extensions'
-code --install-extension Shan.code-settings-sync
+sudo apt-get install code -y
 
 echo 'installing spotify' 
 snap install spotify
@@ -73,6 +63,7 @@ sudo dpkg -i google-chrome-stable_current_amd64.deb
 echo 'installing nvm' 
 sh -c "$(curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash)"
 
+
 export NVM_DIR="$HOME/.nvm" && (
 git clone https://github.com/creationix/nvm.git "$NVM_DIR"
 cd "$NVM_DIR"
@@ -82,6 +73,7 @@ git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
+
 source ~/.zshrc
 nvm --version
 nvm install 12
@@ -89,26 +81,26 @@ nvm alias default 12
 node --version
 npm --version
 
-echo 'installing Typescript'
-npm install -g typescript
+echo 'installing yarn'
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt update && sudo apt install --no-install-recommends yarn -y
 
-echo 'installing Create React App'
-npm install -g create-react-app
 
-echo 'installing autosuggestions' 
-git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
-echo "source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> ~/.zshrc
-source ~/.zshrc
-
-echo 'installing theme'
+echo 'installing zsh theme'
 sudo apt install fonts-firacode -y
 wget -O ~/.oh-my-zsh/themes/node.zsh-theme https://raw.githubusercontent.com/skuridin/oh-my-zsh-node-theme/master/node.zsh-theme 
 sed -i 's/.*ZSH_THEME=.*/ZSH_THEME="node"/g' ~/.zshrc
 
-echo 'installing franz' 
-wget https://github.com/meetfranz/franz/releases/download/v5.1.0/franz_5.1.0_amd64.deb -O franz.deb
-sudo dpkg -i franz.debchristian-kohler.path-intellisense
-sudo apt-get install -y -f 
+echo 'installing docker' 
+sudo apt-get remove docker docker-engine docker.io
+sudo apt install docker.io -y
+sudo systemctl start docker
+sudo systemctl enable docker
+docker --version
+
+chmod 777 /var/run/docker.sock
+docker run hello-world
 
 echo 'installing terminator'
 sudo apt-get update
@@ -160,16 +152,6 @@ cat <<EOF >>  ~/.config/terminator/config
     scrollback_infinite = True
 EOF
 
-echo 'installing docker' 
-sudo apt-get remove docker docker-engine docker.io
-sudo apt install docker.io -y
-sudo systemctl start docker
-sudo systemctl enable docker
-docker --version
-
-chmod 777 /var/run/docker.sock
-docker run hello-world
-
 echo 'installing docker-compose' 
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
@@ -177,6 +159,7 @@ docker-compose --version
 
 echo 'installing kubectl'
 curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+
 
 echo 'installing heroku-cli'
 curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
@@ -189,29 +172,39 @@ curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64
 sudo dpkg -i session-manager-plugin.deb
 session-manager-plugin --version
 
-echo 'installing fzf'
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install --all
+echo 'installing postbird'
+snap install postbird
 
-echo 'installing dbeaver'
-wget -c https://dbeaver.io/files/6.0.0/dbeaver-ce_6.0.0_amd64.deb
-sudo dpkg -i dbeaver-ce_6.0.0_amd64.deb
-sudo apt-get install -f
-
-echo 'installing Robo3t'
-snap install robo3t-snap
-
-echo 'installing Postman' 
-snap install postman
-
-echo 'installing vlc'
-sudo apt install vlc -y
-sudo apt install vlc-plugin-access-extra libbluray-bdj libdvdcss2 -y
+echo 'installing insomnia' 
+snap install insomnia
 
 echo 'installing transmission'
 sudo add-apt-repository ppa:transmissionbt/ppa
 sudo apt-get update
 sudo apt-get install transmission transmission-qt -y
+
+echo 'installing discord'
+sudo snap install discord
+
+echo 'installing slack'
+sudo snap install slack --classic
+
+echo 'installing brave'
+sudo snap install brave
+
+echo 'installing MongoDb Compass'
+wget -O ~/Downloads https://downloads.mongodb.com/compass/mongodb-compass_1.22.1_amd64.deb
+sudo dpkg -i ~/Downloads/mongodb-compass_1.22.1_amd64.deb
+
+echo "Generating a SSH Key"
+ssh-keygen -t rsa -b 4096 -C $git_config_user_email
+ssh-add ~/.ssh/id_rsa
+cat ~/.ssh/id_rsa.pub | xclip -selection clipboard
+
+echo 'cleaning dependencies...'
+sudo apt update && sudo apt dist-upgrade -y
+sudo apt autoclean
+sudo apt autoremove -y
 
 clear 
 
