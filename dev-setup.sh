@@ -209,7 +209,7 @@ ssh-add ~/.ssh/id_rsa
 cat ~/.ssh/id_rsa.pub | xclip -selection clipboard
 
 echo 'cleaning dependencies...'
-sudo apt update && sudo apt dist-upgrade -y
+sudo apt update -y
 sudo apt autoclean
 sudo apt autoremove -y
 
