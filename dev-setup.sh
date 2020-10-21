@@ -180,28 +180,31 @@ sudo dpkg -i session-manager-plugin.deb
 session-manager-plugin --version
 
 echo 'installing postbird'
-snap install postbird
+wget -O ~/Downloads https://github.com/Paxa/postbird/releases/download/0.8.4/Postbird_0.8.4_amd64.deb
+sudo dpkg -i ~/Downloads/Postbird_0.8.4_amd64.deb
+sudo apt-get install -f -y && rm ~/Downloads/Postbird_0.8.4_amd64.deb
 
-echo 'installing insomnia' 
-snap install insomnia
+echo 'Installing Insomnia Core and Omni Theme' 
+echo "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
+  | sudo tee -a /etc/apt/sources.list.d/insomnia.list
+wget --quiet -O - https://insomnia.rest/keys/debian-public.key.asc \
+  | sudo apt-key add -
+sudo apt-get update && sudo apt-get install insomnia -y
+mkdir ~/.config/Insomnia/plugins && cd ~/.config/Insomnia/plugins
+git clone https://github.com/Rocketseat/insomnia-omni.git omni-theme && cd ~
 
-echo 'installing transmission'
-sudo add-apt-repository ppa:transmissionbt/ppa
-sudo apt-get update
-sudo apt-get install transmission transmission-qt -y
+echo 'Installing Discord'
+wget -O discord.deb "https://discordapp.com/api/download?platform=linux&format=deb"
+sudo dpkg -i discord.deb
+sudo apt-get install -f -y && rm discord.deb
 
-echo 'installing discord'
-sudo snap install discord
-
-echo 'installing slack'
-sudo snap install slack --classic
-
-echo 'installing brave'
-sudo snap install brave
 
 echo 'installing MongoDb Compass'
 wget -O ~/Downloads https://downloads.mongodb.com/compass/mongodb-compass_1.22.1_amd64.deb
 sudo dpkg -i ~/Downloads/mongodb-compass_1.22.1_amd64.deb
+
+sudo apt-get install -f -y && rm ~/Downloads/mongodb-compass_1.22.1_amd64.deb
+
 
 echo "Generating a SSH Key"
 ssh-keygen -t rsa -b 4096 -C $git_config_user_email
