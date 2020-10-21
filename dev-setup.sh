@@ -76,8 +76,8 @@ export NVM_DIR="$HOME/.nvm"
 
 source ~/.zshrc
 nvm --version
-nvm install 12
-nvm alias default 12
+nvm install --lts
+nvm current
 node --version
 npm --version
 
@@ -91,6 +91,13 @@ echo 'installing zsh theme'
 sudo apt install fonts-firacode -y
 wget -O ~/.oh-my-zsh/themes/node.zsh-theme https://raw.githubusercontent.com/skuridin/oh-my-zsh-node-theme/master/node.zsh-theme 
 sed -i 's/.*ZSH_THEME=.*/ZSH_THEME="node"/g' ~/.zshrc
+
+echo 'installing zsh plugins'
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
+echo "zinit light zdharma/fast-syntax-highlighting" >> ~/.zshrc
+echo "zinit light zsh-users/zsh-autosuggestions" >> ~/.zshrc
+echo "zinit light zsh-users/zsh-completions" >> ~/.zshrc
+
 
 echo 'installing docker' 
 sudo apt-get remove docker docker-engine docker.io
